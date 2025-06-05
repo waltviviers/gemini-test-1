@@ -1,0 +1,627 @@
+import React, { useState, useEffect } from 'react';
+import { MapPin, Search, Calendar, Users, Star, ChevronLeft, ChevronRight, Phone, Mail, Globe, Sun, Moon, Menu, X, ShieldCheck,Leaf, Compass } from 'lucide-react';
+
+// Placeholder for Firebase (if needed later for dynamic content)
+// import { initializeApp } from 'firebase/app';
+// import { getFirestore, collection, getDocs } from 'firebase/firestore';
+
+// const firebaseConfig = { /* Your Firebase Config */ };
+// const app = initializeApp(firebaseConfig);
+// const db = getFirestore(app);
+
+const App = () => {
+  const [currentPage, setCurrentPage] = useState('home');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+
+  const navigateTo = (page) => {
+    setCurrentPage(page);
+    setIsMobileMenuOpen(false); // Close mobile menu on navigation
+    window.scrollTo(0, 0); // Scroll to top of page
+  };
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
+  const navLinks = [
+    { name: 'Home', page: 'home' },
+    { name: 'Destinations', page: 'destinations' },
+    { name: 'Experiences', page: 'experiences' },
+    { name: 'Our Approach', page: 'about' },
+    { name: 'Contact', page: 'contact' },
+  ];
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'home':
+        return <HomePage navigateTo={navigateTo} />;
+      case 'destinations':
+        return <DestinationsPage navigateTo={navigateTo} />;
+      case 'experiences':
+        return <ExperiencesPage navigateTo={navigateTo} />;
+      case 'about':
+        return <AboutUsPage />; 
+      case 'contact':
+        return <ContactPage />;
+      default:
+        return <HomePage navigateTo={navigateTo} />;
+    }
+  };
+
+  // Main background and text colors
+  const bodyClasses = darkMode 
+    ? 'bg-stone-900 text-stone-200' 
+    : 'bg-yellow-50 text-stone-800'; // Light creamy-brown bg, dark warm-gray text
+
+  // Header background colors
+  const headerBgClasses = darkMode 
+    ? 'bg-stone-800' 
+    : 'bg-white'; // White header in light mode for contrast
+
+  // Footer background colors
+  const footerBgClasses = darkMode
+    ? 'bg-stone-800 border-t border-stone-700'
+    : 'bg-yellow-100 border-t border-yellow-200';
+
+
+  return (
+    <div className={`min-h-screen font-serif ${bodyClasses} transition-colors duration-300`}>
+      {/* Header */}
+      <header className={`sticky top-0 z-50 shadow-lg ${headerBgClasses}`}>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            {/* Logo */}
+            <div className="flex-shrink-0">
+              <a href="#" onClick={() => navigateTo('home')} className="text-3xl font-bold text-orange-700 dark:text-orange-500">
+                Afriluxe Journeys
+              </a>
+            </div>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex space-x-8">
+              {navLinks.map((link) => (
+                <a
+                  key={link.page}
+                  href="#"
+                  onClick={() => navigateTo(link.page)}
+                  className={`text-lg font-medium ${currentPage === link.page 
+                    ? 'text-orange-600 dark:text-orange-400 border-b-2 border-orange-600' 
+                    : 'text-stone-600 dark:text-stone-300 hover:text-orange-500 dark:hover:text-orange-400'} transition-colors duration-200`}
+                >
+                  {link.name}
+                </a>
+              ))}
+            </nav>
+            
+            <div className="flex items-center">
+              <button
+                onClick={toggleDarkMode}
+                className={`p-2 rounded-full hover:bg-yellow-100 dark:hover:bg-stone-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 mr-2`}
+                aria-label="Toggle dark mode"
+              >
+                {darkMode ? <Sun size={24} className="text-yellow-400" /> : <Moon size={24} className="text-stone-700" />}
+              </button>
+              <div className="md:hidden">
+                <button
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  className="text-stone-600 dark:text-stone-300 hover:text-orange-500 dark:hover:text-orange-400 focus:outline-none"
+                  aria-label="Open menu"
+                >
+                  {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Navigation Menu */}
+        {isMobileMenuOpen && (
+          <div className={`md:hidden absolute top-20 left-0 right-0 shadow-xl pb-4 ${darkMode ? 'bg-stone-800' : 'bg-white'}`}>
+            <nav className="flex flex-col space-y-4 px-6 pt-4">
+              {navLinks.map((link) => (
+                <a
+                  key={link.page}
+                  href="#"
+                  onClick={() => navigateTo(link.page)}
+                  className={`block py-2 text-lg font-medium rounded-md text-center ${currentPage === link.page 
+                    ? 'bg-orange-600 text-white' 
+                    : 'text-stone-600 dark:text-stone-300 hover:bg-yellow-100 dark:hover:bg-stone-700 hover:text-orange-500'} transition-colors duration-200`}
+                >
+                  {link.name}
+                </a>
+              ))}
+            </nav>
+          </div>
+        )}
+      </header>
+
+      <main>{renderPage()}</main>
+
+      <footer className={`py-12 ${footerBgClasses}`}>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div>
+              <h3 className="text-xl font-semibold mb-4 text-orange-600 dark:text-orange-500">Afriluxe Journeys</h3>
+              <p className="text-stone-600 dark:text-stone-400">Curating extraordinary luxury adventures across Africa for discerning US & European travellers.</p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-4 text-orange-600 dark:text-orange-500">Explore</h3>
+              <ul className="space-y-2">
+                {navLinks.map(link => (
+                   <li key={`footer-${link.page}`}>
+                     <a href="#" onClick={() => navigateTo(link.page)} className="text-stone-600 dark:text-stone-400 hover:text-orange-500 dark:hover:text-orange-400">
+                       {link.name}
+                     </a>
+                   </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-4 text-orange-600 dark:text-orange-500">Connect With Our Experts</h3>
+              <div className="flex justify-center space-x-4">
+                <a href="mailto:concierge@afriluxejourneys.com" className="text-stone-600 dark:text-stone-400 hover:text-orange-500 dark:hover:text-orange-400" aria-label="Email Afriluxe Journeys"><Mail size={24} /></a>
+                <a href="tel:+1800AFRILUXE" className="text-stone-600 dark:text-stone-400 hover:text-orange-500 dark:hover:text-orange-400" aria-label="Call Afriluxe Journeys"><Phone size={24} /></a>
+              </div>
+            </div>
+          </div>
+          <p className="text-stone-500 dark:text-stone-400 text-sm">&copy; {new Date().getFullYear()} Afriluxe Journeys. All rights reserved. Tailored African Luxury for USA & Europe.</p>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+// --- Page Components ---
+// Section background colors
+const sectionBgLight = 'bg-yellow-100'; // Slightly darker than body bg-yellow-50
+const sectionBgDark = 'dark:bg-stone-800'; // Slightly lighter than body dark:bg-stone-900
+
+// Card background colors
+const cardBgLight = 'bg-white'; // White cards for contrast on light mode
+const cardBgDark = 'dark:bg-stone-700'; // Darker cards on dark mode
+
+// Text colors for sections/cards
+const primaryTextLight = 'text-stone-800';
+const secondaryTextLight = 'text-stone-600';
+const primaryTextDark = 'dark:text-stone-100';
+const secondaryTextDark = 'dark:text-stone-300';
+const tertiaryTextDark = 'dark:text-stone-400';
+
+
+const HomePage = ({ navigateTo }) => {
+  const testimonials = [
+    { id: 1, name: 'The Thompson Family, New York, USA', quote: "Our multi-generational safari in Tanzania, orchestrated by Afriluxe Journeys, was simply breathtaking...", avatar: 'https://placehold.co/100x100/E9D5FF/4A00E0?text=TF', rating: 5 },
+    { id: 2, name: 'Mr. Alistair Finch, London, UK', quote: "From the vineyards of Cape Town to the majesty of Victoria Falls... Afriluxe curated a flawless Southern African adventure.", avatar: 'https://placehold.co/100x100/A7F3D0/065F46?text=AF', rating: 5 },
+    { id: 3, name: 'Dr. Elena Petrova, Berlin, Germany', quote: "My bespoke primate trekking experience in Rwanda was profound... Highly recommended for discerning travelers.", avatar: 'https://placehold.co/100x100/FBCFE8/831843?text=EP', rating: 5 }
+  ];
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+
+  const nextTestimonial = () => setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+  const prevTestimonial = () => setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  
+  useEffect(() => {
+    const timer = setInterval(nextTestimonial, 7000);
+    return () => clearInterval(timer);
+  }, [testimonials.length]);
+
+  const featuredDestinations = [
+    { name: 'Serengeti & Ngorongoro, Tanzania', image: 'https://placehold.co/600x400/E1701A/FFFFFF?text=Serengeti+Safari', description: 'Witness the Great Migration and pristine crater ecosystems.' },
+    { name: 'Cape Town & Winelands, South Africa', image: 'https://placehold.co/600x400/D68910/FFFFFF?text=Cape+Town', description: 'Iconic Table Mountain, vibrant culture, and world-class vineyards.' },
+    { name: 'Okavango Delta, Botswana', image: 'https://placehold.co/600x400/BA4A00/FFFFFF?text=Okavango+Delta', description: 'Unique water-based safaris in a pristine wilderness.' },
+  ];
+
+  return (
+    <div className="animate-fadeIn">
+      <section 
+        className="relative h-[calc(100vh-5rem)] bg-cover bg-center flex items-center justify-center text-white"
+        style={{ backgroundImage: "url('https://placehold.co/1920x1080/604020/FFFFFF?text=Luxury+African+Sunset+View')" }} 
+      >
+        <div className="absolute inset-0 bg-black opacity-60"></div>
+        <div className="relative z-10 text-center p-4">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight animate-slideInUp">Africa Awaits: Your Bespoke<br />Luxury Adventure</h1>
+          <p className="text-xl md:text-2xl mb-10 max-w-3xl mx-auto animate-slideInUp" style={{animationDelay: '0.2s'}}>
+            Discover the soul of Africa with journeys meticulously crafted for discerning US and European travellers. Unparalleled wildlife, vibrant cultures, and breathtaking landscapes.
+          </p>
+          <button 
+            onClick={() => navigateTo('destinations')}
+            className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 px-10 rounded-lg text-lg shadow-lg transform hover:scale-105 transition-transform duration-300 animate-slideInUp"
+            style={{animationDelay: '0.4s'}}
+          > Explore African Destinations </button>
+        </div>
+      </section>
+
+      <section className={`py-16 md:py-24 ${sectionBgDark}`}> {/* Body dark bg is stone-900, section slightly lighter */}
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className={`text-3xl md:text-4xl font-semibold mb-6 ${primaryTextLight} ${primaryTextDark}`}>Welcome to Afriluxe Journeys</h2>
+          <p className={`text-lg ${secondaryTextLight} ${secondaryTextDark} max-w-3xl mx-auto mb-10`}>
+            We specialize in creating extraordinary, tailor-made luxury travel experiences...
+          </p>
+          <div className="grid md:grid-cols-3 gap-8 text-left">
+            <div className={`p-6 ${cardBgLight} ${cardBgDark} rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300`}>
+              <Compass size={40} className="text-orange-500 mb-4" />
+              <h3 className={`text-xl font-semibold mb-2 ${primaryTextLight} ${primaryTextDark}`}>Iconic African Destinations</h3>
+              <p className={`${secondaryTextLight} ${tertiaryTextDark}`}>From the vast plains of the Serengeti...</p>
+            </div>
+            <div className={`p-6 ${cardBgLight} ${cardBgDark} rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300`}>
+              <Users size={40} className="text-orange-500 mb-4" />
+              <h3 className={`text-xl font-semibold mb-2 ${primaryTextLight} ${primaryTextDark}`}>Expertly Crafted Itineraries</h3>
+              <p className={`${secondaryTextLight} ${tertiaryTextDark}`}>Our specialists, with deep knowledge...</p>
+            </div>
+            <div className={`p-6 ${cardBgLight} ${cardBgDark} rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300`}>
+              <ShieldCheck size={40} className="text-orange-500 mb-4" />
+              <h3 className={`text-xl font-semibold mb-2 ${primaryTextLight} ${primaryTextDark}`}>Seamless & Secure Travel</h3>
+              <p className={`${secondaryTextLight} ${tertiaryTextDark}`}>We prioritize your comfort and safety...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className={`py-16 md:py-24 ${sectionBgLight} ${sectionBgDark}`}>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className={`text-3xl md:text-4xl font-semibold text-center mb-12 ${primaryTextLight} ${primaryTextDark}`}>Featured Luxury African Journeys</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {featuredDestinations.map((dest, index) => (
+              <div key={index} className={`${cardBgLight} ${cardBgDark} rounded-xl shadow-lg overflow-hidden group transform hover:scale-105 transition-transform duration-300`}>
+                <img src={dest.image} alt={dest.name} className="w-full h-64 object-cover" onError={(e) => e.target.src='https://placehold.co/600x400/964B00/FFFFFF?text=Africa'} />
+                <div className="p-6">
+                  <h3 className={`text-2xl font-semibold mb-2 ${primaryTextLight} ${primaryTextDark}`}>{dest.name}</h3>
+                  <p className={`${secondaryTextLight} ${tertiaryTextDark} mb-4`}>{dest.description}</p>
+                  <button 
+                    onClick={() => navigateTo('destinations')}
+                    className="text-orange-600 dark:text-orange-400 hover:text-orange-700 dark:hover:text-orange-500 font-semibold group-hover:underline"
+                  > Discover This Region &rarr; </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-12">
+            <button 
+              onClick={() => navigateTo('destinations')}
+              className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-md hover:shadow-lg transition-all duration-300"
+            > Explore All African Destinations </button>
+          </div>
+        </div>
+      </section>
+
+      <section className={`py-16 md:py-24 ${sectionBgDark}`}>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className={`text-3xl md:text-4xl font-semibold text-center mb-12 ${primaryTextLight} ${primaryTextDark}`}>Experiences from Our US & European Clients</h2>
+          <div className={`relative max-w-3xl mx-auto ${cardBgLight} ${cardBgDark} p-8 md:p-12 rounded-xl shadow-2xl`}>
+            <button onClick={prevTestimonial} className="absolute left-0 md:-left-6 top-1/2 transform -translate-y-1/2 bg-orange-600 text-white p-3 rounded-full shadow-md hover:bg-orange-700 transition-colors duration-200 z-10" aria-label="Previous testimonial"> <ChevronLeft size={24} /> </button>
+            <button onClick={nextTestimonial} className="absolute right-0 md:-right-6 top-1/2 transform -translate-y-1/2 bg-orange-600 text-white p-3 rounded-full shadow-md hover:bg-orange-700 transition-colors duration-200 z-10" aria-label="Next testimonial"> <ChevronRight size={24} /> </button>
+            <div className="text-center">
+              <img src={testimonials[currentTestimonial].avatar} alt={testimonials[currentTestimonial].name} className="w-24 h-24 rounded-full mx-auto mb-6 border-4 border-orange-400 dark:border-orange-600 shadow-lg" onError={(e) => e.target.src='https://placehold.co/100x100/A0522D/FFFFFF?text=Client'} />
+              <p className={`text-lg md:text-xl italic ${secondaryTextLight} ${secondaryTextDark} mb-6 leading-relaxed`}> "{testimonials[currentTestimonial].quote}" </p>
+              <h4 className={`text-xl font-semibold ${primaryTextLight} ${primaryTextDark}`}>{testimonials[currentTestimonial].name}</h4>
+              <div className="flex justify-center mt-2">
+                {[...Array(testimonials[currentTestimonial].rating)].map((_, i) => <Star key={i} size={20} className="text-yellow-400 fill-current" />)}
+                {[...Array(5 - testimonials[currentTestimonial].rating)].map((_, i) => <Star key={i} size={20} className="text-stone-300 dark:text-stone-600 fill-current" />)}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 md:py-24 bg-orange-600 text-white"> {/* Main CTA is orange */}
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">Your Unforgettable African Journey Begins Here</h2>
+          <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto text-orange-100"> Connect with our African travel specialists today... </p>
+          <button 
+            onClick={() => navigateTo('contact')}
+            className="bg-white text-orange-700 font-bold py-4 px-10 rounded-lg text-lg shadow-lg transform hover:scale-105 transition-transform duration-300 hover:bg-yellow-50"
+          > Start Planning Your African Escape </button>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+const DestinationsPage = ({ navigateTo }) => {
+  const destinations = [
+    { id: 1, name: 'Serengeti & Ngorongoro, Tanzania', image: 'https://placehold.co/600x400/E1701A/FFFFFF?text=Serengeti+Plains', description: 'Home to the Great Migration...', category: 'East Africa', priceRange: '$$$$$', highlights: ['Great Migration (seasonal)', 'Luxury Safari Lodges', 'Ngorongoro Crater Descent', 'Maasai Cultural Visits'] },
+    { id: 2, name: 'Okavango Delta & Chobe, Botswana', image: 'https://placehold.co/600x400/D68910/FFFFFF?text=Okavango+Mokoro', description: 'Explore the unique waterways of the Okavango...', category: 'Southern Africa', priceRange: '$$$$$', highlights: ['Mokoro Safaris', 'Chobe River Cruises', 'Luxury Tented Camps', 'Exceptional Birdlife'] },
+    { id: 3, name: 'Cape Town & The Winelands, South Africa', image: 'https://placehold.co/600x400/BA4A00/FFFFFF?text=Cape+Town+View', description: 'A vibrant city with iconic Table Mountain...', category: 'Southern Africa', priceRange: '$$$$', highlights: ['Table Mountain Cable Car', 'Cape Peninsula Tour', 'Wine Tasting & Gourmet Dining', 'Robben Island Visit'] },
+    { id: 4, name: 'Maasai Mara, Kenya', image: 'https://placehold.co/600x400/A0522D/FFFFFF?text=Maasai+Mara', description: 'Famous for its rolling plains...', category: 'East Africa', priceRange: '$$$$', highlights: ['Big Five Sightings', 'Hot Air Balloon Safaris', 'Luxury Tented Camps', 'Maasai Community Interactions'] },
+    { id: 5, name: 'Victoria Falls, Zambia & Zimbabwe', image: 'https://placehold.co/600x400/8D4004/FFFFFF?text=Victoria+Falls', description: 'Witness "The Smoke That Thunders..."', category: 'Southern Africa', priceRange: '$$$$', highlights: ['Guided Falls Tours', 'Helicopter Flights', 'Sunset Zambezi Cruises', 'Luxury Riverside Lodges'] },
+    { id: 6, name: 'Volcanoes National Park, Rwanda', image: 'https://placehold.co/600x400/E67E22/FFFFFF?text=Rwanda+Gorilla', description: 'An unforgettable experience trekking to see endangered mountain gorillas...', category: 'East Africa', priceRange: '$$$$$', highlights: ['Mountain Gorilla Trekking', 'Golden Monkey Tracking', 'Luxury Eco-Lodges', 'Dian Fossey Gorilla Fund'] },
+    { id: 7, name: 'Sossusvlei & Namib Desert, Namibia', image: 'https://placehold.co/600x400/D35400/FFFFFF?text=Sossusvlei+Dunes', description: 'Explore the otherworldly landscapes of towering red sand dunes...', category: 'Southern Africa', priceRange: '$$$$', highlights: ['Climbing Dune 45/Big Daddy', 'Deadvlei & Sesriem Canyon', 'Stargazing', 'Luxury Desert Lodges'] },
+    { id: 8, name: 'Luxury Nile Cruise & Ancient Egypt', image: 'https://placehold.co/600x400/A0522D/FFFFFF?text=Nile+Cruise+Egypt', description: 'Journey through history along the Nile River...', category: 'North Africa', priceRange: '$$$$', highlights: ['Temples of Karnak & Luxor', 'Valley of the Kings', 'Abu Simbel', 'Luxury Dahabiya Cruises'] },
+    { id: 9, name: 'Seychelles & Mauritius', image: 'https://placehold.co/600x400/E59866/FFFFFF?text=Seychelles+Beach', description: 'Indulge in ultimate relaxation on pristine beaches...', category: 'African Islands', priceRange: '$$$$$', highlights: ['Private Beach Villas', 'Diving & Snorkeling', 'Luxury Spas', 'Island Hopping'] },
+  ];
+
+  const [filter, setFilter] = useState('All');
+  const categories = ['All', ...new Set(destinations.map(d => d.category))];
+  const filteredDestinations = filter === 'All' ? destinations : destinations.filter(d => d.category === filter);
+
+  return (
+    <div className={`animate-fadeIn py-12 md:py-16 ${sectionBgDark}`}> {/* Use body's dark bg for pages */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className={`text-4xl md:text-5xl font-bold text-center mb-4 ${primaryTextLight} ${primaryTextDark}`}>Luxury African Destinations</h1>
+        <p className={`text-lg ${secondaryTextLight} ${tertiaryTextDark} text-center mb-12 max-w-2xl mx-auto`}>
+          From iconic safari heartlands to idyllic islands and ancient wonders...
+        </p>
+        <div className="mb-10 flex flex-wrap justify-center gap-3">
+          {categories.map(category => (
+            <button
+              key={category}
+              onClick={() => setFilter(category)}
+              className={`px-6 py-2 rounded-full font-medium transition-colors duration-200
+                ${filter === category 
+                  ? 'bg-orange-600 text-white shadow-md' 
+                  : `bg-yellow-200 dark:bg-stone-700 text-stone-700 dark:text-stone-200 hover:bg-orange-500 hover:text-white dark:hover:bg-orange-600`}`}
+            > {category} </button>
+          ))}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+          {filteredDestinations.map(dest => (
+            <div key={dest.id} className={`${cardBgLight} ${cardBgDark} rounded-xl shadow-xl overflow-hidden flex flex-col group transform hover:-translate-y-2 transition-all duration-300`}>
+              <div className="relative">
+                <img src={dest.image} alt={dest.name} className="w-full h-72 object-cover" onError={(e) => e.target.src='https://placehold.co/600x400/964B00/FFFFFF?text=African+Scene'}/>
+                <div className="absolute top-4 right-4 bg-orange-600 text-white text-sm px-3 py-1 rounded-full shadow"> {dest.priceRange} </div>
+              </div>
+              <div className="p-6 flex flex-col flex-grow">
+                <h3 className={`text-2xl font-semibold mb-2 ${primaryTextLight} ${primaryTextDark}`}>{dest.name}</h3>
+                <p className={`text-sm flex-grow mb-4 ${secondaryTextLight} ${tertiaryTextDark}`}>{dest.description}</p>
+                <div className="mb-4">
+                    <h4 className={`font-semibold text-sm mb-1 ${primaryTextLight} ${secondaryTextDark}`}>Key Highlights:</h4>
+                    <ul className={`list-disc list-inside text-xs space-y-1 ${secondaryTextLight} ${tertiaryTextDark}`}>
+                        {dest.highlights.slice(0,3).map(hl => <li key={hl}>{hl}</li>)}
+                        {dest.highlights.length > 3 && <li>And many more...</li>}
+                    </ul>
+                </div>
+                <button onClick={() => alert(`Enquire about luxury travel to ${dest.name}.`)} className="mt-auto w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-colors duration-300 group-hover:bg-orange-700"> Plan This Journey </button>
+              </div>
+            </div>
+          ))}
+        </div>
+        {filteredDestinations.length === 0 && <p className={`text-center text-xl col-span-full mt-10 ${secondaryTextLight} ${tertiaryTextDark}`}> No destinations currently match your filter. </p>}
+      </div>
+    </div>
+  );
+};
+
+const ExperiencesPage = ({ navigateTo }) => {
+  const experiences = [
+    { id: 1, title: 'Private Guided Safari in a Premier Concession', image: 'https://placehold.co/600x400/A3E635/000000?text=Private+Safari+Jeep', description: 'Experience exclusive game viewing...', category: 'Wildlife & Safari', duration: '5-10 Days' },
+    { id: 2, title: 'Gorilla & Chimpanzee Trekking Expedition', image: 'https://placehold.co/600x400/6366F1/FFFFFF?text=Gorilla+Encounter', description: 'Embark on a life-changing journey...', category: 'Primate Encounters', duration: '7-10 Days' },
+    { id: 3, title: 'Hot Air Balloon Over the Maasai Mara or Serengeti', image: 'https://placehold.co/600x400/FACC15/000000?text=Safari+Balloon', description: 'Soar silently above the plains at sunrise...', category: 'Unique Adventures', duration: 'Half Day' },
+    { id: 4, title: 'Luxury Mobile Camping Safari', image: 'https://placehold.co/600x400/7DD3FC/000000?text=Luxury+Mobile+Camp', description: 'Follow the wildlife with a private, fully-serviced mobile camp...', category: 'Wildlife & Safari', duration: '7-14 Days' },
+    { id: 5, title: 'Exclusive Island Escape in Seychelles or Mozambique', image: 'https://placehold.co/600x400/F472B6/FFFFFF?text=Private+Island+Villa', description: 'Retreat to a private villa on a pristine tropical island...', category: 'Beach & Island Luxury', duration: '5-10 Days' },
+    { id: 6, title: 'Curated Cultural Immersion & Philanthropic Journey', image: 'https://placehold.co/600x400/34D399/000000?text=African+Community', description: 'Engage meaningfully with local communities...', category: 'Cultural & Philanthropic', duration: '4-7 Days' },
+    { id: 7, title: 'Sleepout Under the Stars (Star Bed Experience)', image: 'https://placehold.co/600x400/1F2937/FFFFFF?text=Star+Bed+Africa', description: 'Experience the magic of the African bush with a night spent on a luxurious, open-air star bed...', category: 'Unique Adventures', duration: '1 Night (part of a safari)'},
+    { id: 8, title: 'Fine Wine & Gourmet Trail in the Cape Winelands', image: 'https://placehold.co/600x400/C084FC/FFFFFF?text=Cape+Winelands', description: 'Explore South Africa\'s stunning Winelands with private tastings...', category: 'Culinary & Wine', duration: '3-5 Days'},
+  ];
+  const [filter, setFilter] = useState('All');
+  const categories = ['All', ...new Set(experiences.map(exp => exp.category))];
+  const filteredExperiences = filter === 'All' ? experiences : experiences.filter(exp => exp.category === filter);
+
+  return (
+    <div className={`animate-fadeIn py-12 md:py-16 ${sectionBgDark}`}>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className={`text-4xl md:text-5xl font-bold text-center mb-4 ${primaryTextLight} ${primaryTextDark}`}>Signature African Experiences</h1>
+        <p className={`text-lg ${secondaryTextLight} ${tertiaryTextDark} text-center mb-12 max-w-2xl mx-auto`}>
+          Elevate your African journey with our collection of handpicked luxury experiences...
+        </p>
+         <div className="mb-10 flex flex-wrap justify-center gap-3">
+          {categories.map(category => (
+            <button
+              key={category}
+              onClick={() => setFilter(category)}
+              className={`px-6 py-2 rounded-full font-medium transition-colors duration-200
+                ${filter === category 
+                  ? 'bg-orange-600 text-white shadow-md' 
+                  : `bg-yellow-200 dark:bg-stone-700 text-stone-700 dark:text-stone-200 hover:bg-orange-500 hover:text-white dark:hover:bg-orange-600`}`}
+            > {category} </button>
+          ))}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+          {filteredExperiences.map(exp => (
+            <div key={exp.id} className={`${cardBgLight} ${cardBgDark} rounded-xl shadow-xl overflow-hidden flex flex-col group transform hover:-translate-y-2 transition-all duration-300`}>
+              <img src={exp.image} alt={exp.title} className="w-full h-64 object-cover" onError={(e) => e.target.src='https://placehold.co/600x400/964B00/FFFFFF?text=African+Exp'}/>
+              <div className="p-6 flex flex-col flex-grow">
+                <h3 className={`text-xl font-semibold mb-2 ${primaryTextLight} ${primaryTextDark}`}>{exp.title}</h3>
+                <p className={`text-xs mb-1 uppercase tracking-wider ${secondaryTextLight} ${tertiaryTextDark}`}>{exp.category} | {exp.duration}</p>
+                <p className={`text-sm flex-grow mb-4 ${secondaryTextLight} ${tertiaryTextDark}`}>{exp.description}</p>
+                <button onClick={() => alert(`Learn more about the '${exp.title}' experience.`)} className="mt-auto w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md transition-colors duration-300 group-hover:bg-orange-700"> Tailor This Experience </button>
+              </div>
+            </div>
+          ))}
+        </div>
+        {filteredExperiences.length === 0 && <p className={`text-center text-xl col-span-full mt-10 ${secondaryTextLight} ${tertiaryTextDark}`}> No experiences match your current filter. </p>}
+      </div>
+    </div>
+  );
+};
+
+const AboutUsPage = () => { 
+  const teamMembers = [
+    { name: 'Ava Chenworth', role: 'Founder & Chief Experience Officer (USA Office)', image: 'https://placehold.co/300x300/E67E22/FFFFFF?text=AC', bio: 'With 20+ years in luxury travel...' },
+    { name: 'David Okello', role: 'Head of African Operations & Conservation Lead (Nairobi Hub)', image: 'https://placehold.co/300x300/D35400/FFFFFF?text=DO', bio: 'David brings unparalleled on-the-ground expertise...' },
+    { name: 'Sophie Dubois', role: 'Senior Travel Designer (Europe Office)', image: 'https://placehold.co/300x300/BA4A00/FFFFFF?text=SD', bio: 'Sophie excels in crafting intricate, bespoke itineraries...' },
+  ];
+
+  return (
+    <div className={`animate-fadeIn py-12 md:py-16 ${sectionBgDark}`}>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <section 
+          className="relative rounded-xl overflow-hidden h-96 bg-cover bg-center flex items-center justify-center text-white mb-16 shadow-lg"
+          style={{ backgroundImage: "url('https://placehold.co/1200x400/4A2511/FFFFFF?text=Afriluxe+Team+Collage')" }}
+        >
+          <div className="absolute inset-0 bg-black opacity-60"></div>
+          <div className="relative z-10 text-center p-4">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4">Our Approach to African Luxury</h1>
+            <p className="text-xl md:text-2xl">Connecting You to the Heart of Africa, Responsibly and Exclusively.</p>
+          </div>
+        </section>
+
+        <section className="mb-16">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className={`text-3xl md:text-4xl font-semibold mb-6 ${primaryTextLight} ${primaryTextDark}`}>The Afriluxe Difference</h2>
+            <p className={`text-lg leading-relaxed ${secondaryTextLight} ${tertiaryTextDark}`}> At Afriluxe Journeys, we understand that luxury is personal... </p>
+          </div>
+        </section>
+
+        <section className="mb-16">
+          <h2 className={`text-3xl md:text-4xl font-semibold text-center mb-10 ${primaryTextLight} ${primaryTextDark}`}>Our Commitments</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className={`${cardBgLight} ${cardBgDark} p-8 rounded-xl shadow-lg text-center hover:shadow-xl transition-shadow duration-300`}>
+              <ShieldCheck size={48} className="text-orange-500 mx-auto mb-4" />
+              <h3 className={`text-2xl font-semibold mb-3 ${primaryTextLight} ${primaryTextDark}`}>Peace of Mind</h3>
+              <p className={`${secondaryTextLight} ${tertiaryTextDark}`}>Expert planning, 24/7 support...</p>
+            </div>
+            <div className={`${cardBgLight} ${cardBgDark} p-8 rounded-xl shadow-lg text-center hover:shadow-xl transition-shadow duration-300`}>
+              <Users size={48} className="text-orange-500 mx-auto mb-4" />
+              <h3 className={`text-2xl font-semibold mb-3 ${primaryTextLight} ${primaryTextDark}`}>Bespoke Journeys</h3>
+              <p className={`${secondaryTextLight} ${tertiaryTextDark}`}>Tailoring every detail to your preferences...</p>
+            </div>
+            <div className={`${cardBgLight} ${cardBgDark} p-8 rounded-xl shadow-lg text-center hover:shadow-xl transition-shadow duration-300`}>
+              <Leaf size={48} className="text-yellow-600 mx-auto mb-4" /> {/* Golden brown leaf */}
+              <h3 className={`text-2xl font-semibold mb-3 ${primaryTextLight} ${primaryTextDark}`}>Sustainable Impact</h3>
+              <p className={`${secondaryTextLight} ${tertiaryTextDark}`}>Partnering with eco-conscious lodges...</p>
+            </div>
+          </div>
+        </section>
+        
+        <section className="mb-16">
+          <h2 className={`text-3xl md:text-4xl font-semibold text-center mb-12 ${primaryTextLight} ${primaryTextDark}`}>Meet Our Africa Specialists</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            {teamMembers.map(member => (
+              <div key={member.name} className={`${cardBgLight} ${cardBgDark} rounded-xl shadow-lg p-6 text-center transform hover:scale-105 transition-transform duration-300`}>
+                <img src={member.image} alt={member.name} className="w-32 h-32 rounded-full mx-auto mb-4 object-cover border-4 border-orange-400 dark:border-orange-600" onError={(e) => e.target.src='https://placehold.co/300x300/A0522D/FFFFFF?text=Expert'}/>
+                <h3 className={`text-xl font-semibold ${primaryTextLight} ${primaryTextDark}`}>{member.name}</h3>
+                <p className="text-orange-600 dark:text-orange-400 mb-2">{member.role}</p>
+                <p className={`text-sm ${secondaryTextLight} ${tertiaryTextDark}`}>{member.bio}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+};
+
+const ContactPage = () => {
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', destinationInterest: '', message: '' });
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitError(''); 
+    if (!formData.name || !formData.email || !formData.message) { setSubmitError('Please fill in Name, Email, and Message.'); return; }
+    if (!/\S+@\S+\.\S+/.test(formData.email)) { setSubmitError('Please enter a valid email address.'); return; }
+    console.log('African Luxury Travel Inquiry:', formData);
+    await new Promise(resolve => setTimeout(resolve, 1000)); 
+    setIsSubmitted(true);
+    setFormData({ name: '', email: '', phone: '', destinationInterest: '', message: '' }); 
+  };
+
+  if (isSubmitted) {
+    return (
+      <div className={`animate-fadeIn py-16 md:py-24 ${sectionBgDark} flex items-center justify-center`} style={{minHeight: 'calc(100vh - 13rem)'}}>
+        <div className={`container mx-auto px-4 sm:px-6 lg:px-8 text-center ${cardBgLight} ${cardBgDark} p-10 rounded-xl shadow-2xl max-w-lg`}>
+          <Mail size={64} className="text-green-500 mx-auto mb-6" /> {/* Success icon */}
+          <h2 className={`text-3xl font-semibold mb-4 ${primaryTextLight} ${primaryTextDark}`}>Thank You for Your Inquiry!</h2>
+          <p className={`text-lg ${secondaryTextLight} ${tertiaryTextDark} mb-6`}> An Afriluxe Journeys specialist will be in touch shortly... </p>
+          <button onClick={() => setIsSubmitted(false)} className="bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-8 rounded-lg text-lg shadow-md transition-colors duration-300"> Make Another Inquiry </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`animate-fadeIn py-12 md:py-16 ${sectionBgDark}`}>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className={`text-4xl md:text-5xl font-bold text-center mb-4 ${primaryTextLight} ${primaryTextDark}`}>Consult Our Africa Travel Specialists</h1>
+        <p className={`text-lg ${secondaryTextLight} ${tertiaryTextDark} text-center mb-12 max-w-2xl mx-auto`}> Ready to explore the wonders of Africa in unparalleled luxury?... </p>
+        <div className="grid lg:grid-cols-2 gap-12 items-start">
+          <div className={`${cardBgLight} ${cardBgDark} p-8 md:p-10 rounded-xl shadow-2xl`}>
+            <h2 className={`text-2xl font-semibold mb-6 ${primaryTextLight} ${primaryTextDark}`}>Start Your Journey</h2>
+            {submitError && <p className="mb-4 text-sm text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900 p-3 rounded-md">{submitError}</p>}
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label htmlFor="name" className={`block text-sm font-medium ${secondaryTextLight} ${secondaryTextDark} mb-1`}>Full Name <span className="text-red-500">*</span></label>
+                <input type="text" name="name" id="name" value={formData.name} onChange={handleChange} required className={`w-full px-4 py-3 rounded-lg border-yellow-300 dark:border-stone-600 focus:ring-orange-500 focus:border-orange-500 dark:bg-stone-700 ${primaryTextDark} shadow-sm text-sm`} placeholder="e.g., Jane Smith (USA)" />
+              </div>
+              <div>
+                <label htmlFor="email" className={`block text-sm font-medium ${secondaryTextLight} ${secondaryTextDark} mb-1`}>Email Address <span className="text-red-500">*</span></label>
+                <input type="email" name="email" id="email" value={formData.email} onChange={handleChange} required className={`w-full px-4 py-3 rounded-lg border-yellow-300 dark:border-stone-600 focus:ring-orange-500 focus:border-orange-500 dark:bg-stone-700 ${primaryTextDark} shadow-sm text-sm`} placeholder="e.g., j.smith@example.com" />
+              </div>
+              <div>
+                <label htmlFor="phone" className={`block text-sm font-medium ${secondaryTextLight} ${secondaryTextDark} mb-1`}>Phone Number (Optional)</label>
+                <input type="tel" name="phone" id="phone" value={formData.phone} onChange={handleChange} className={`w-full px-4 py-3 rounded-lg border-yellow-300 dark:border-stone-600 focus:ring-orange-500 focus:border-orange-500 dark:bg-stone-700 ${primaryTextDark} shadow-sm text-sm`} placeholder="e.g., +1 555 123 4567" />
+              </div>
+              <div>
+                <label htmlFor="destinationInterest" className={`block text-sm font-medium ${secondaryTextLight} ${secondaryTextDark} mb-1`}>African Destination(s) of Interest</label>
+                <input type="text" name="destinationInterest" id="destinationInterest" value={formData.destinationInterest} onChange={handleChange} className={`w-full px-4 py-3 rounded-lg border-yellow-300 dark:border-stone-600 focus:ring-orange-500 focus:border-orange-500 dark:bg-stone-700 ${primaryTextDark} shadow-sm text-sm`} placeholder="e.g., Kenya & Tanzania Safari"/>
+              </div>
+              <div>
+                <label htmlFor="message" className={`block text-sm font-medium ${secondaryTextLight} ${secondaryTextDark} mb-1`}>Your Travel Aspirations <span className="text-red-500">*</span></label>
+                <textarea name="message" id="message" rows="5" value={formData.message} onChange={handleChange} required className={`w-full px-4 py-3 rounded-lg border-yellow-300 dark:border-stone-600 focus:ring-orange-500 focus:border-orange-500 dark:bg-stone-700 ${primaryTextDark} shadow-sm text-sm`} placeholder="Tell us about your ideal African trip..."></textarea>
+              </div>
+              <div>
+                <button type="submit" className={`w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-lg text-lg shadow-md transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 dark:focus:ring-offset-stone-800`}> Request Consultation </button>
+              </div>
+            </form>
+          </div>
+          <div className="space-y-8">
+             <div className={`${cardBgLight} ${cardBgDark} p-8 rounded-xl shadow-xl`}>
+                <h2 className={`text-2xl font-semibold mb-6 ${primaryTextLight} ${primaryTextDark}`}>USA & Europe Client Services</h2>
+                <div className="space-y-5">
+                    <div className="flex items-start"> <Phone size={28} className="text-orange-500 mr-4 mt-1 flex-shrink-0" />
+                        <div> <h3 className={`text-lg font-medium ${primaryTextLight} ${secondaryTextDark}`}>Call Our Specialists</h3> <a href="tel:+1800AFRILUXE" className={`block ${secondaryTextLight} ${tertiaryTextDark} hover:text-orange-500 text-lg`}>USA Toll-Free: +1 (800) AFRI-LUXE</a> <a href="tel:+44203LUXAFRI" className={`block ${secondaryTextLight} ${tertiaryTextDark} hover:text-orange-500 text-lg`}>Europe (UK based): +44 203 LUX-AFRI</a> <p className={`text-sm ${secondaryTextLight} dark:text-stone-500`}>Mon - Fri, 9 AM - 6 PM (EST / GMT)</p> </div>
+                    </div>
+                    <div className="flex items-start"> <Mail size={28} className="text-orange-500 mr-4 mt-1 flex-shrink-0" />
+                        <div> <h3 className={`text-lg font-medium ${primaryTextLight} ${secondaryTextDark}`}>Email Our Concierge</h3> <a href="mailto:concierge.us@afriluxejourneys.com" className={`block ${secondaryTextLight} ${tertiaryTextDark} hover:text-orange-500 text-lg`}>concierge.us@afriluxejourneys.com</a> <a href="mailto:concierge.eu@afriluxejourneys.com" className={`block ${secondaryTextLight} ${tertiaryTextDark} hover:text-orange-500 text-lg`}>concierge.eu@afriluxejourneys.com</a> <p className={`text-sm ${secondaryTextLight} dark:text-stone-500`}>We aim to respond within a few business hours.</p> </div>
+                    </div>
+                    <div className="flex items-start"> <MapPin size={28} className="text-orange-500 mr-4 mt-1 flex-shrink-0" />
+                        <div> <h3 className={`text-lg font-medium ${primaryTextLight} ${secondaryTextDark}`}>Consultation Offices (By Appointment)</h3> <p className={`text-lg ${secondaryTextLight} ${tertiaryTextDark}`}>New York | London | Paris | Berlin</p> <p className={`text-sm ${secondaryTextLight} dark:text-stone-500`}>Contact us to schedule a virtual or in-person consultation.</p> </div>
+                    </div>
+                </div>
+            </div>
+            <div className={`${cardBgLight} ${cardBgDark} p-8 rounded-xl shadow-xl`}>
+                <h2 className={`text-2xl font-semibold mb-6 ${primaryTextLight} ${primaryTextDark}`}>Follow Our Adventures</h2>
+                 <p className={`${secondaryTextLight} ${tertiaryTextDark} mb-4`}>Stay inspired with our latest journeys...</p>
+                 <div className="flex justify-center space-x-4">
+                    <a href="#" className="text-stone-400 hover:text-orange-500"><svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd" /></svg></a>
+                    <a href="#" className="text-stone-400 hover:text-orange-500"><svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.172.052 1.795.218 2.388.465.66.275.97.598 1.4.97.43.372.753.69.97 1.4.248.593.413 1.216.465 2.388.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.052 1.172-.218 1.795-.465 2.388a3.893 3.893 0 01-.97 1.4c-.372.43-.69.753-1.4.97-.593.248-1.216.413-2.388.465-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.172-.052-1.795-.218-2.388-.465a3.893 3.893 0 01-.97-1.4c-.372-.43-.69-.753-.97-1.4-.248-.593-.413-1.216-.465-2.388-.058-1.266-.07-1.646-.07-4.85s.012-3.584.07-4.85c.052-1.172.218-1.795.465-2.388.275-.66.598-.97.97-1.4.372-.43.69-.753 1.4-.97.593-.248 1.216-.413 2.388-.465C8.416 2.175 8.796 2.163 12 2.163zm0 1.626c-3.142 0-3.496.011-4.708.066-1.08.048-1.647.21-2.096.393-.514.204-.822.462-1.15.79-.328.328-.586.636-.79 1.15-.183.449-.345 1.016-.393 2.096C2.811 8.504 2.8 8.858 2.8 12s.011 3.496.066 4.708c.048 1.08.21 1.647.393 2.096.204.514.462.822.79 1.15.328.328.636.586 1.15.79.449.183 1.016.345 2.096.393 1.212.055 1.566.066 4.708.066s3.496-.011 4.708-.066c1.08-.048 1.647-.21 2.096-.393.514-.204.822-.462 1.15-.79.328-.328.586-.636.79-1.15.183-.449.345-1.016.393-2.096.055-1.212.066-1.566.066-4.708s-.011-3.496-.066-4.708c-.048-1.08-.21-1.647-.393-2.096-.204-.514-.462-.822-.79-1.15-.328-.328-.636-.586-1.15-.79-.449-.183-1.016-.345-2.096-.393C15.504 2.811 15.142 2.8 12 2.8zm0 4.306c-2.972 0-5.378 2.406-5.378 5.378s2.406 5.378 5.378 5.378 5.378-2.406 5.378-5.378-2.406-5.378-5.378-5.378zm0 8.756c-1.864 0-3.378-1.514-3.378-3.378s1.514-3.378 3.378-3.378 3.378 1.514 3.378 3.378-1.514 3.378-3.378 3.378zm5.212-9.027a1.25 1.25 0 100-2.5 1.25 1.25 0 000 2.5z"/></svg></a> {/* Placeholder for Instagram */}
+                 </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const styleSheet = document.createElement("style");
+styleSheet.type = "text/css";
+styleSheet.innerText = `
+  .animate-fadeIn { animation: fadeIn 0.8s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .animate-slideInUp { animation: slideInUp 0.7s ease-out forwards; opacity:0; }
+  @keyframes slideInUp { 
+    from { opacity: 0; transform: translateY(50px); } 
+    to { opacity: 1; transform: translateY(0); } 
+  }
+  
+  html.dark {
+    color-scheme: dark; /* Ensures browser UI elements like scrollbars match the dark theme */
+  }
+`;
+document.head.appendChild(styleSheet);
+
+
+export default App;
